@@ -1,10 +1,21 @@
 # Reading Notes Chrome Extension
 A chrome sidebar extension to keep track of notes across websites. Provides a list of links that you can click to take you to that note.
 
-Usage is straightward:
-1. highlight a piece of text on a page
-2. right click > copy link to highlight
-3. in sidebar, paste url and save note
-4. a new note should appear which you can click to take you to it
+## Download
+1. Clone or download this repo
+2. Open [chrome://extensions](chrome://extensions)
+3. Enable developer mode
+4. Drag /dist folder into page
+5. Should be installed
 
-### Screenshot
+## Usage
+1. Highlight a piece of text on a page
+2. Right click > Copy link to highlight
+
+   ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/b9100cfa-7dfc-43a4-95c0-d13ca09e5696)
+3. In sidebar, paste url and save note
+
+   ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/ce9397cb-5d48-4c42-a913-1969fede8354)
+4. A note is added which you can view by clicking
+
+  ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/76742422-d146-4682-9e19-f6b0f31e914b) 
