@@ -8,6 +8,7 @@ A chrome sidebar extension to keep track of notes across websites. Provides a li
 2. Open chrome://extensions in new tab
 3. Enable developer mode
 4. Drag /build folder onto page
+   - run `npm run build` to create your own build
 5. Should be installed
 
 ## Usage
