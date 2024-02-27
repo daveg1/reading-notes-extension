@@ -3,9 +3,9 @@ A chrome sidebar extension to keep track of notes across websites. Provides a li
 
 ## Download
 1. Clone or download this repo
-2. Open [chrome://extensions](chrome://extensions)
+2. Open chrome://extensions in new tab
 3. Enable developer mode
-4. Drag /dist folder into page
+4. Drag /dist folder onto page
 5. Should be installed
 
 ## Usage
