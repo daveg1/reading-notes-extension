@@ -1,0 +1,20 @@
+{
+  "../../../../../@crx/manifest": {
+    "file": "assets/crx-manifest.js-BT6kbetk.js",
+    "src": "../../../../../@crx/manifest",
+    "isEntry": true
+  },
+  "index.html": {
+    "file": "assets/index.html-B-UlXjwh.js",
+    "src": "index.html",
+    "isEntry": true,
+    "css": [
+      "assets/index-BvkGL44p.css"
+    ]
+  },
+  "service-worker.ts": {
+    "file": "assets/service-worker.ts-DnYMsJAD.js",
+    "src": "service-worker.ts",
+    "isEntry": true
+  }
+}
