@@ -1,5 +1,5 @@
 import { Note } from './interfaces/note';
-import { getActiveTab, getStoreValue, setStoreValue } from './utils';
+import { getActiveTab, getPageTitleForUrl, getStoreValue, setStoreValue } from './utils';
 
 const NOTE_STORAGE_KEY = 'notes';
 
@@ -32,11 +32,11 @@ class State {
 
 		if (!source || !text) return null;
 
-		const activeTab = await getActiveTab();
+		const sourceTitle = await getPageTitleForUrl(sourceUrl) ?? (await getActiveTab()).title ?? '';
 
 		return {
 			id: crypto.randomUUID(),
-			sourceTitle: activeTab.title ?? '',
+			sourceTitle,
 			sourceUrl,
 			text: decodeURIComponent(text),
 		};
