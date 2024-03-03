@@ -1,11 +1,11 @@
 {
-  "../../../../../@crx/manifest": {
-    "file": "assets/crx-manifest.js-BT6kbetk.js",
-    "src": "../../../../../@crx/manifest",
+  "../../@crx/manifest": {
+    "file": "assets/crx-manifest.js-CCibvsTB.js",
+    "src": "../../@crx/manifest",
     "isEntry": true
   },
   "index.html": {
-    "file": "assets/index.html-B-UlXjwh.js",
+    "file": "assets/index.html-D3SJtX4x.js",
     "src": "index.html",
     "isEntry": true,
     "css": [
