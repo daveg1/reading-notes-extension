@@ -1,7 +1,7 @@
 {
-  "../../../../../@crx/manifest": {
-    "file": "assets/crx-manifest.js-BT6kbetk.js",
-    "src": "../../../../../@crx/manifest",
+  "../../@crx/manifest": {
+    "file": "assets/crx-manifest.js-CCibvsTB.js",
+    "src": "../../@crx/manifest",
     "isEntry": true
   },
   "index.html": {

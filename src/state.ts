@@ -28,7 +28,7 @@ class State {
 	}
 
 	async noteObjectFromUrl(sourceUrl: string): Promise<Note | null> {
-		const [source, text] = sourceUrl.split('#:~:text=');
+		const [source, text] = sourceUrl.split(':~:text=');
 
 		if (!source || !text) return null;
 
@@ -36,7 +36,6 @@ class State {
 
 		return {
 			id: crypto.randomUUID(),
-			source,
 			sourceTitle: activeTab.title ?? '',
 			sourceUrl,
 			text: decodeURIComponent(text),
