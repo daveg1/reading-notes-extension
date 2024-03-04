@@ -10,8 +10,22 @@ class State {
 		this.#notes = notes;
 	}
 
-	get notes() {
+	getNotes() {
 		return this.#notes;
+	}
+
+	getGroupedNotes() {
+		// create groups
+		const groups = new Map<string, Note[]>();
+		for (const note of this.#notes) {
+			if (groups.has(note.sourceTitle)) {
+				groups.get(note.sourceTitle)?.push(note)
+			} else {
+				groups.set(note.sourceTitle, [note])
+			}
+		}
+
+		return groups
 	}
 
 	async addNote(note: Note) {
