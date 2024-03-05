@@ -14,12 +14,14 @@ export function renderNotes() {
 	const noteList = getElement<HTMLDivElement>('.note-list');
 	noteList.innerHTML = '';
 
-	if (!notesState.getNotes()?.length) {
+	if (!notesState.notes.length) {
 		noteList.innerHTML = 'No notes yet.';
-	} else {
+		return
+	}
+	
+	// Groups
+	if (notesState.options.isGrouped) {
 		const groups = notesState.getGroupedNotes();
-
-		// Groups
 		const fragment = new DocumentFragment();
 
 		for (const [title, notes] of groups.entries()) {
@@ -30,10 +32,10 @@ export function renderNotes() {
 		}
 
 		noteList.append(fragment);
-
-		// if ungrouped:
-		// const notesFragment = createNotes(notesOrGroups);
-		// noteList.append(notesFragment);
+	}
+	else {
+		const notesFragment = createNotes(notesState.notes);
+		noteList.append(notesFragment);
 	}
 }
 

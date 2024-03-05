@@ -24,6 +24,15 @@
 		line-height: 1.25rem;
 		position: relative;
 	}
+
+	&__actions {
+		display: flex;
+		gap: var(--spacing-half);
+
+		.button {
+			height: 1.5rem;
+		}
+	}
 }
 
 .button {
