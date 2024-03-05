@@ -88,6 +88,10 @@
 .note {
 	position: relative;
 
+	&:hover {
+		background-color: #e7e7e7;
+	}
+
 	&__link {
 		border-radius: 2px;
 		box-shadow: 0 1px 3px #ccc;
