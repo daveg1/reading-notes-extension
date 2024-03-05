@@ -1,6 +1,6 @@
-import { renderNotes, renderOptions } from ".";
+import { renderNotes, renderOptions } from '.'
 
 export function renderApp() {
-  renderOptions();
-  renderNotes();
+  renderOptions()
+  renderNotes()
 }
