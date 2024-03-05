@@ -1,27 +1,27 @@
-import './style.scss';
-import { getElement, renderApp, renderNotes } from './utils/';
-import { notesState } from './state';
+import './style.scss'
+import { getElement, renderApp, renderNotes } from './utils/'
+import { notesState } from './state'
 
-const noteForm = getElement<HTMLFormElement>('#note-form');
-const FORM_URL_FIELD = 'h-url';
+const noteForm = getElement<HTMLFormElement>('#note-form')
+const FORM_URL_FIELD = 'h-url'
 
 noteForm.onsubmit = async (e) => {
-	e.preventDefault();
+  e.preventDefault()
 
-	const data = new FormData(noteForm);
-	const url = data.get(FORM_URL_FIELD) as string;
+  const data = new FormData(noteForm)
+  const url = data.get(FORM_URL_FIELD) as string
 
-	const note = await notesState.noteObjectFromUrl(url);
+  const note = await notesState.noteObjectFromUrl(url)
 
-	if (!note) {
-		// getElement(`#note-url-input`).
-		return;
-	}
+  if (!note) {
+    // getElement(`#note-url-input`).
+    return
+  }
 
-	notesState.addNote(note);
-	noteForm.hidden = true;
-	noteForm.reset();
-	renderNotes();
-};
+  notesState.addNote(note)
+  noteForm.hidden = true
+  noteForm.reset()
+  renderNotes()
+}
 
-renderApp();
+renderApp()

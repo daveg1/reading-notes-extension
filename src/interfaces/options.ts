@@ -1,4 +1,4 @@
 export interface Options {
-	isGrouped: boolean;
-	isAsc: boolean;
+  isGrouped: boolean
+  isAsc: boolean
 }
