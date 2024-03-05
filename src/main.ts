@@ -1,5 +1,5 @@
 import './style.scss';
-import { getElement, renderNotes } from './utils/';
+import { getElement, renderApp, renderNotes } from './utils/';
 import { notesState } from './state';
 
 const noteForm = getElement<HTMLFormElement>('#note-form');
@@ -24,4 +24,4 @@ noteForm.onsubmit = async (e) => {
 	renderNotes();
 };
 
-renderNotes();
+renderApp();
