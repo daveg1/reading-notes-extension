@@ -1,6 +1,7 @@
 import { Note } from './interfaces/note';
 import { Options } from './interfaces/options';
 import { getActiveTab, getPageTitleForUrl, getStoreValue, setStoreValue } from './utils';
+import { ascendingPredicate, descendingPredicate } from './utils/sort';
 
 const NOTE_STORAGE_KEY = 'notes';
 const OPTIONS_STORAGE_KEY = 'notes-options';
@@ -24,13 +25,13 @@ class State {
 	}
 	
 	get notes() {
-		return this.#notes;
+		return this.#notes.sort(this.#options.isAsc ? ascendingPredicate : descendingPredicate);
 	}
 
 	getGroupedNotes() {
 		// create groups
 		const groups = new Map<string, Note[]>();
-		for (const note of this.#notes) {
+		for (const note of this.notes) {
 			if (groups.has(note.sourceTitle)) {
 				groups.get(note.sourceTitle)?.push(note)
 			} else {
