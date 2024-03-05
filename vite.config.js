@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite'
 import { crx } from '@crxjs/vite-plugin'
 import manifest from './manifest.json'
-import topLevelAwait from 'vite-plugin-top-level-await'
 
 export default defineConfig({
   build: {
+    target: 'es2022',
     outDir: './build',
   },
   server: {
@@ -14,5 +14,5 @@ export default defineConfig({
       port: 5173,
     },
   },
-  plugins: [crx({ manifest }), topLevelAwait()],
+  plugins: [crx({ manifest })],
 })
