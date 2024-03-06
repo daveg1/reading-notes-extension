@@ -1,4 +1,4 @@
-// import { createTextFragment } from './utils'
+import { createTextFragment } from './utils'
 
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
@@ -10,14 +10,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const results = await chrome.scripting.executeScript({
     target: { tabId: tab.id! },
     func: async (selection: string) => {
-      // await createTextFragment(selection)
+      await createTextFragment(selection)
     },
     args: [info.selectionText],
   })
 
   const textFragment = results[0].result
   console.log(info)
-  // console.log(textFragment)
+  console.log(textFragment)
 })
 
 // Add new context menu item
