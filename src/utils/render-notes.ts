@@ -71,6 +71,7 @@ function createNoteHTML(note: Note, hasSection = false) {
   anchor.className = 'note__link'
   anchor.href = note.sourceUrl
   anchor.target = '_blank'
+  anchor.rel = 'noopener'
 
   if (!hasSection) {
     anchor.innerHTML += `<span class="note__link__source" title="${note.sourceTitle}">${note.sourceTitle}</span>`
