@@ -4,7 +4,7 @@ import manifest from './manifest.json'
 
 export default defineConfig({
   build: {
-    target: 'es2022',
+    target: 'ES2022',
     outDir: './build',
   },
   server: {
