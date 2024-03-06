@@ -4,15 +4,10 @@
   "description": "Take notes while you read online",
   "version": "1.0",
   "host_permissions": ["http://*/*", "https://*/*"],
-	"permissions": [
-    "scripting",
-    "sidePanel",
-    "storage",
-    "tabs"
-  ],
-	"background": {
+  "permissions": ["contextMenus", "scripting", "sidePanel", "storage", "tabs"],
+  "background": {
     "service_worker": "service-worker.ts"
-	},
+  },
   "side_panel": {
     "default_path": "index.html"
   }
