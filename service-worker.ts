@@ -9,15 +9,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   const results = await chrome.scripting.executeScript({
     target: { tabId: tab.id! },
-    func: async (selection: string) => {
-      await createTextFragment(selection)
-    },
+    func: createTextFragment,
     args: [info.selectionText],
   })
 
   const textFragment = results[0].result
-  console.log(info)
-  console.log(textFragment)
+  console.log('fragment', textFragment)
 })
 
 // Add new context menu item

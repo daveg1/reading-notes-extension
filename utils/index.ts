@@ -26,7 +26,7 @@ function findPrevTextNode(anchorNode: Node) {
   anchorNode.previousSibling
 }
 
-async function getTextNodesFor(root: Node) {
+function getTextNodesFor(root: Node) {
   const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
 
   const textNodes: Node[] = []
@@ -40,11 +40,33 @@ async function getTextNodesFor(root: Node) {
     .filter((node) => !!node)
 }
 
-export async function createTextFragment(textSelection) {
-  // const textNodes = await getTextNodes()
-  const selection = window.getSelection()
-  selection?.getRangeAt(0).startContainer
-  const prevTextNode = findPrevTextNode(selection?.anchorNode!)
+export function createTextFragment(textSelection) {
+  function getSelection() {
+    const selection = window.getSelection()
+    selection?.getRangeAt(0).startContainer
+    return selection
+  }
+
+  function getTextNodesFor(root: Node) {
+    const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+
+    const textNodes: Node[] = []
+    while (treeWalker.nextNode()) {
+      const node = treeWalker.currentNode
+      textNodes.push(node)
+    }
+
+    return textNodes
+      .map((node) => node.textContent?.trim())
+      .filter((node) => !!node)
+  }
+
+  const textNodes = getTextNodesFor(document.body)
+  const selection = getSelection()
+  console.log(textNodes)
+  console.log(selection)
+
+  // const prevTextNode = findPrevTextNode(selection?.anchorNode!)
 
   return textSelection
 }
