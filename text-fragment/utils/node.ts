@@ -66,14 +66,7 @@ export function isNodeVisible(node: Node): boolean {
  *     currently pointing to |node|, which will traverse only visible text and
  *     element nodes.
  */
-export function makeWalkerForNode(
-  node: Node,
-  endNode?: Node
-): TreeWalker | undefined {
-  if (!node) {
-    return undefined
-  }
-
+export function makeWalkerForNode(node: Node, endNode?: Node): TreeWalker {
   // Find a block-level ancestor of the node by walking up the tree. This
   // will be used as the root of the tree walker.
   let blockAncestor = node
@@ -115,11 +108,11 @@ export function makeTextNodeWalker(range: Range): TreeWalker {
 /**
  * Finds the node at which a forward traversal through |range| should begin,
  * based on the range's start container and offset values.
+ *
+ * For text nodes, this is the start container
+ * For element nodes, we use the offset to find the starting point
  */
 export function getFirstNodeForBlockSearch(range: Range): Node {
-  // Get a handle on the first node inside the range. For text nodes, this
-  // is the start container; for element nodes, we use the offset to find
-  // where it actually starts.
   const node = range.startContainer
 
   if (
@@ -230,13 +223,10 @@ interface TextNodeList {
  * as |node| (i.e., those that are descendents of a common ancestor of |node|
  * with no other block elements in between.)
  */
-export function getTextNodesInSameBlock(node: Node): TextNodeList | null {
+export function getTextNodesInSameBlock(node: Node): TextNodeList {
   const preNodes: Node[] = []
   // First, backtraverse to get to a block boundary
   const backWalker = makeWalkerForNode(node)
-  if (!backWalker) {
-    return null
-  }
 
   const finishedSubtrees = new Set<Node>()
   let backNode = backwardTraverse(backWalker, finishedSubtrees)
@@ -280,10 +270,6 @@ export function getTextNodesInSameBlock(node: Node): TextNodeList | null {
 
   const postNodes: Node[] = []
   const forwardWalker = makeWalkerForNode(node)
-
-  if (!forwardWalker) {
-    return null
-  }
 
   // Forward traverse from node after having finished its subtree
   // to get text nodes after it until we find a block boundary.
@@ -362,22 +348,23 @@ export function forwardTraverse(
   // try to go first down the subtree.
   if (!finishedSubtrees.has(walker.currentNode)) {
     const firstChild = walker.firstChild()
-    if (firstChild !== null) {
+    if (firstChild) {
       return firstChild
     }
   }
 
   // If no subtree go to next sibling if any.
   const nextSibling = walker.nextSibling()
-  if (nextSibling !== null) {
+  if (nextSibling) {
     return nextSibling
   }
 
   // If no sibling go back to parent and mark it as finished.
   const parent = walker.parentNode()
-  if (parent !== null) {
+  if (parent) {
     finishedSubtrees.add(parent)
   }
+
   return parent
 }
 
@@ -399,20 +386,20 @@ export function backwardTraverse(
   // try to go first down the subtree.
   if (!finishedSubtrees.has(walker.currentNode)) {
     const lastChild = walker.lastChild()
-    if (lastChild !== null) {
+    if (lastChild) {
       return lastChild
     }
   }
 
   // If no subtree go to previous sibling if any.
   const previousSibling = walker.previousSibling()
-  if (previousSibling !== null) {
+  if (previousSibling) {
     return previousSibling
   }
 
   // If no sibling go back to parent and mark it as finished.
   const parent = walker.parentNode()
-  if (parent !== null) {
+  if (parent) {
     finishedSubtrees.add(parent)
   }
 

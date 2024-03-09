@@ -156,13 +156,9 @@ export function isWordBounded(
  *     block boundaries are found inside this range, or if all the candidate
  *     ranges were empty (or included only whitespace characters).
  */
-export function getSearchSpaceForStart(range: Range): string | undefined {
+export function getSearchSpaceForStart(range: Range): string {
   let node: Node | null = getFirstNodeForBlockSearch(range)
   const walker = makeWalkerForNode(node, range.endContainer)
-
-  if (!walker) {
-    return undefined
-  }
 
   const finishedSubtrees = new Set<Node>()
   // If the range starts after the last child of an element node
@@ -202,7 +198,7 @@ export function getSearchSpaceForStart(range: Range): string | undefined {
     node = forwardTraverse(walker, finishedSubtrees)
   }
 
-  return undefined
+  return ''
 }
 
 /**

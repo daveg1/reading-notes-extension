@@ -5,13 +5,7 @@ import { BLOCK_ELEMENTS } from '../constants'
  */
 export function isBlock(node: Node): boolean {
   const { tagName } = node as HTMLElement
-
-  return (
-    node.nodeType === Node.ELEMENT_NODE &&
-    (BLOCK_ELEMENTS.includes(tagName) ||
-      tagName === 'HTML' ||
-      tagName === 'BODY')
-  )
+  return node.nodeType === Node.ELEMENT_NODE && BLOCK_ELEMENTS.includes(tagName)
 }
 
 /**

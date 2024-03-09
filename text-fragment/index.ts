@@ -7,8 +7,6 @@ import { GenerateFragmentStatus } from './enums'
 import { GenerateFragmentResult, TextFragment } from './interfaces'
 import {
   recordStartTime,
-  expandRangeStartToWordBound,
-  expandRangeEndToWordBound,
   moveRangeEdgesToTextNodes,
   canUseExactMatch,
   normalizeString,
@@ -18,6 +16,7 @@ import {
   makeNewSegmenter,
   checkTimeout,
   TimeoutError,
+  expandToNearestWordBoundaryPoint,
 } from './utils'
 
 // export * from './textFragment'
@@ -32,12 +31,9 @@ import {
  * Attempts to generate a fragment, suitable for formatting and including in a
  * URL, which will highlight the given selection upon opening.
  */
-export function generateFragment(
-  selection: Selection,
-  startTime = Date.now()
-): GenerateFragmentResult {
+export function generateFragment(selection: Selection): GenerateFragmentResult {
   try {
-    return doGenerateFragment(selection, startTime)
+    return doGenerateFragment(selection)
   } catch (err) {
     return {
       status:
@@ -48,12 +44,9 @@ export function generateFragment(
   }
 }
 
-function doGenerateFragment(
-  selection: Selection,
-  startTime: number
-): GenerateFragmentResult {
-  recordStartTime(startTime)
-  let range
+function doGenerateFragment(selection: Selection): GenerateFragmentResult {
+  recordStartTime()
+  let range: Range
 
   try {
     range = selection.getRangeAt(0)
@@ -63,8 +56,8 @@ function doGenerateFragment(
     }
   }
 
-  expandRangeStartToWordBound(range)
-  expandRangeEndToWordBound(range)
+  expandToNearestWordBoundaryPoint(false, range)
+  expandToNearestWordBoundaryPoint(true, range)
 
   // Keep a copy of the range before we try to shrink it to make it start and
   // end in text nodes. We need to use the range edges as starting points
@@ -74,12 +67,15 @@ function doGenerateFragment(
   // and the original ones.
   const rangeBeforeShrinking = range.cloneRange()
   moveRangeEdgesToTextNodes(range)
+
   if (range.collapsed) {
     return {
       status: GenerateFragmentStatus.INVALID_SELECTION,
     }
   }
-  let factory
+
+  let factory: FragmentFactory
+
   if (canUseExactMatch(range)) {
     const exactText = normalizeString(range.toString())
     const fragment: TextFragment = {
@@ -88,6 +84,7 @@ function doGenerateFragment(
       suffix: '',
       textEnd: '',
     }
+
     // If the exact text is long enough to be used on its own, try this and skip
     // the longer process below.
     if (
@@ -99,6 +96,7 @@ function doGenerateFragment(
         fragment: fragment,
       }
     }
+
     factory = new FragmentFactory().setExactTextMatch(exactText)
   } else {
     // We have to use textStart and textEnd to identify a range. First, break
@@ -106,6 +104,7 @@ function doGenerateFragment(
     // these.
     const startSearchSpace = getSearchSpaceForStart(range)
     const endSearchSpace = getSearchSpaceForEnd(range)
+
     if (startSearchSpace && endSearchSpace) {
       // If the search spaces are truthy, then there's a block boundary between
       // them.
@@ -141,7 +140,10 @@ function doGenerateFragment(
   const suffixSearchSpace = getSearchSpaceForStart(suffixRange)
 
   if (prefixSearchSpace || suffixSearchSpace) {
-    factory.setPrefixAndSuffixSearchSpace(prefixSearchSpace, suffixSearchSpace)
+    factory.setPrefixAndSuffixSearchSpace(
+      prefixSearchSpace ?? '',
+      suffixSearchSpace ?? ''
+    )
   }
 
   factory.useSegmenter(makeNewSegmenter())

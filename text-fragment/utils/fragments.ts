@@ -7,10 +7,6 @@ import {
   checkSuffix,
 } from '.'
 
-export function isUniquelyIdentifying(fragment: TextFragment): boolean {
-  return processTextFragmentDirective(fragment).length === 1
-}
-
 /**
  * Searches the document for a given text fragment.
  *
@@ -20,13 +16,10 @@ export function isUniquelyIdentifying(fragment: TextFragment): boolean {
  *     returned (regardless of how many more matches there may be in the
  *     document).
  */
-export function processTextFragmentDirective(
-  textFragment: TextFragment,
-  documentToProcess = document
-): Range[] {
+export function isUniquelyIdentifying(textFragment: TextFragment): boolean {
   const results: Range[] = []
-  const searchRange = documentToProcess.createRange()
-  searchRange.selectNodeContents(documentToProcess.body)
+  const searchRange = document.createRange()
+  searchRange.selectNodeContents(document.body)
 
   while (!searchRange.collapsed && results.length < 2) {
     let potentialMatch
@@ -47,7 +40,7 @@ export function processTextFragmentDirective(
       // The search space for textStart is everything after the prefix and
       // before the end of the top-level search range, starting at the next
       // non- whitespace position.
-      const matchRange = documentToProcess.createRange()
+      const matchRange = document.createRange()
       matchRange.setStart(prefixMatch.endContainer, prefixMatch.endOffset)
       matchRange.setEnd(searchRange.endContainer, searchRange.endOffset)
       advanceRangeStartToNonWhitespace(matchRange)
@@ -86,7 +79,7 @@ export function processTextFragmentDirective(
       )
     }
     if (textFragment.textEnd) {
-      const textEndRange = documentToProcess.createRange()
+      const textEndRange = document.createRange()
       textEndRange.setStart(
         potentialMatch.endContainer,
         potentialMatch.endOffset
@@ -123,7 +116,7 @@ export function processTextFragmentDirective(
             textFragment.suffix,
             potentialMatch,
             searchRange,
-            documentToProcess
+            document
           )
 
           if (suffixResult === CheckSuffixResult.NO_SUFFIX_MATCH) {
@@ -155,7 +148,7 @@ export function processTextFragmentDirective(
         textFragment.suffix,
         potentialMatch,
         searchRange,
-        documentToProcess
+        document
       )
 
       if (suffixResult === CheckSuffixResult.NO_SUFFIX_MATCH) {
@@ -175,5 +168,5 @@ export function processTextFragmentDirective(
       results.push(potentialMatch.cloneRange())
     }
   }
-  return results
+  return results.length === 1
 }

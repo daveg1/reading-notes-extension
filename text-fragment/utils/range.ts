@@ -84,88 +84,13 @@ export function findTextInRange(
 }
 
 /**
- * Modifies the end of the range, if necessary, to ensure the selection text
- * ends before a boundary char (whitespace, etc.) or a block boundary. Can only
- * expand the range, not shrink it.
- * @param range - the range to be modified
- */
-export function expandRangeEndToWordBound(range: Range) {
-  const segmenter = makeNewSegmenter()
-
-  if (segmenter) {
-    // Find the ending text node and offset (since the range may end with a
-    // non-text node).
-    const endNode = getLastNodeForBlockSearch(range)
-    if (endNode !== range.endContainer) {
-      range.setEndAfter(endNode)
-    }
-    expandToNearestWordBoundaryPointUsingSegments(
-      segmenter,
-      /* expandForward= */ true,
-      range
-    )
-  } else {
-    let initialOffset = range.endOffset
-    let node = range.endContainer
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      if (range.endOffset < node.childNodes.length) {
-        node = node.childNodes[range.endOffset]
-      }
-    }
-    const walker = makeWalkerForNode(node)
-    if (!walker) {
-      return
-    }
-    // We'll traverse the dom after node's subtree to try to find
-    // either a word or block boundary.
-    const finishedSubtrees = new Set([node])
-    while (node != null) {
-      checkTimeout()
-
-      const newOffset = findWordEndBoundInTextNode(node, initialOffset)
-      // Future iterations should not use initialOffset; null it out so it is
-      // discarded.
-      initialOffset = null
-      if (newOffset !== -1) {
-        range.setEnd(node, newOffset)
-        return
-      }
-
-      // If |node| is a block node, then we've hit a block boundary, which
-      // counts as a word boundary.
-      if (isBlock(node)) {
-        if (node.contains(range.endContainer)) {
-          // If the selection starts inside |node|, then the correct range
-          // boundary is the *trailing* edge of |node|.
-          range.setEnd(node, node.childNodes.length)
-        } else {
-          // Otherwise, |node| is after the selection, so the correct boundary
-          // is the *leading* edge of |node|.
-          range.setEndBefore(node)
-        }
-        return
-      }
-      node = forwardTraverse(walker, finishedSubtrees)
-    }
-    // We should never get here; the walker should eventually hit a block node
-    // or the root of the document. Collapse range so the caller can handle this
-    // as an error.
-    range.collapse()
-  }
-}
-
-/**
  * Determines whether the conditions for an exact match are met.
  */
 export function canUseExactMatch(range: Range): boolean {
-  if (range.toString().length > MAX_EXACT_MATCH_LENGTH) return false
-  return !containsBlockBoundary(range)
-}
+  if (range.toString().length > MAX_EXACT_MATCH_LENGTH) {
+    return false
+  }
 
-/**
- * Determines whether or not a range crosses a block boundary.
- */
-function containsBlockBoundary(range: Range): boolean {
   const tempRange = range.cloneRange()
   let node: Node | null = getFirstNodeForBlockSearch(tempRange)
 
@@ -178,6 +103,7 @@ function containsBlockBoundary(range: Range): boolean {
   while (!tempRange.collapsed && node != null) {
     if (isBlock(node)) return true
     if (node != null) tempRange.setStartAfter(node)
+
     node = forwardTraverse(walker, finishedSubtrees)
     checkTimeout()
   }
@@ -185,11 +111,9 @@ function containsBlockBoundary(range: Range): boolean {
 }
 
 /**
- * Uses Intl.Segmenter to shift the start or end of a range to a word boundary.
- * Helper method for expandWord*ToWordBound methods.
+ * Shifts the start or end of a range to a word boundary.
  */
-function expandToNearestWordBoundaryPointUsingSegments(
-  segmenter: Intl.Segmenter,
+export function expandToNearestWordBoundaryPoint(
   isRangeEnd: boolean,
   range: Range
 ): void {
@@ -201,13 +125,15 @@ function expandToNearestWordBoundaryPointUsingSegments(
   }
 
   const nodeList = getTextNodesInSameBlock(boundary.node)
-  const preNodeText = nodeList?.preNodes.reduce((prev, cur) => {
-    return prev.concat(cur.textContent ?? '')
-  }, '')
+  const preNodeText = nodeList?.preNodes.reduce(
+    (prev, cur) => `${prev}${cur.textContent ?? ''}`,
+    ''
+  )
 
-  const innerNodeText = nodeList?.innerNodes.reduce((prev, cur) => {
-    return prev.concat(cur.textContent ?? '')
-  }, '')
+  const innerNodeText = nodeList?.innerNodes.reduce(
+    (prev, cur) => `${prev}${cur.textContent ?? ''}`,
+    ''
+  )
 
   let offsetInText = preNodeText?.length ?? 0
   if (boundary.node.nodeType === Node.TEXT_NODE) {
@@ -217,14 +143,15 @@ function expandToNearestWordBoundaryPointUsingSegments(
   }
 
   // Find the segment of the full block text containing the range start.
-  const postNodeText = nodeList?.postNodes.reduce((prev, cur) => {
-    return prev.concat(cur.textContent ?? '')
-  }, '')
+  const postNodeText = nodeList?.postNodes.reduce(
+    (prev, cur) => `${prev}${cur.textContent ?? ''}`,
+    ''
+  )
 
   const allNodes = [
-    ...(nodeList?.preNodes ?? []),
-    ...(nodeList?.innerNodes ?? []),
-    ...(nodeList?.postNodes ?? []),
+    ...nodeList.preNodes,
+    ...nodeList.innerNodes,
+    ...nodeList.postNodes,
   ]
 
   // Edge case: There's no text nodes in the block.
@@ -234,7 +161,8 @@ function expandToNearestWordBoundaryPointUsingSegments(
     return
   }
 
-  const text = preNodeText?.concat(innerNodeText ?? '', postNodeText ?? '')
+  const text = `${preNodeText ?? ''}${innerNodeText ?? ''}${postNodeText ?? ''}`
+  const segmenter = makeNewSegmenter()
   const segments = segmenter.segment(text ?? '')
   const foundSegment = segments.containing(offsetInText)
 
@@ -306,78 +234,6 @@ function expandToNearestWordBoundaryPointUsingSegments(
 }
 
 /**
- * Modifies the start of the range, if necessary, to ensure the selection text
- * starts after a boundary char (whitespace, etc.) or a block boundary. Can only
- * expand the range, not shrink it.
- */
-export function expandRangeStartToWordBound(range: Range) {
-  const segmenter = makeNewSegmenter()
-  if (segmenter) {
-    // Find the starting text node and offset (since the range may start with a
-    // non-text node).
-    const startNode = getFirstNodeForBlockSearch(range)
-    if (startNode !== range.startContainer) {
-      range.setStartBefore(startNode)
-    }
-    expandToNearestWordBoundaryPointUsingSegments(
-      segmenter,
-      /* expandForward= */ false,
-      range
-    )
-  } else {
-    // Simplest case: If we're in a text node, try to find a boundary char in
-    // the same text node.
-    const newOffset = findWordStartBoundInTextNode(
-      range.startContainer,
-      range.startOffset
-    )
-    if (newOffset !== -1) {
-      range.setStart(range.startContainer, newOffset)
-      return
-    }
-
-    // Also, skip doing any traversal if we're already at the inside edge of
-    // a block node.
-    if (isBlock(range.startContainer) && range.startOffset === 0) {
-      return
-    }
-    const walker = makeWalkerForNode(range.startContainer)
-    if (!walker) {
-      return
-    }
-    const finishedSubtrees = new Set<Node>()
-    let node = backwardTraverse(walker, finishedSubtrees)
-    while (node != null) {
-      const newOffset = findWordStartBoundInTextNode(node)
-      if (newOffset !== -1) {
-        range.setStart(node, newOffset)
-        return
-      }
-
-      // If |node| is a block node, then we've hit a block boundary, which
-      // counts as a word boundary.
-      if (isBlock(node)) {
-        if (node.contains(range.startContainer)) {
-          // If the selection starts inside |node|, then the correct range
-          // boundary is the *leading* edge of |node|.
-          range.setStart(node, 0)
-        } else {
-          // Otherwise, |node| is before the selection, so the correct boundary
-          // is the *trailing* edge of |node|.
-          range.setStartAfter(node)
-        }
-        return
-      }
-      node = internal.backwardTraverse(walker, finishedSubtrees)
-      // We should never get here; the walker should eventually hit a block node
-      // or the root of the document. Collapse range so the caller can handle
-      // this as an error.
-      range.collapse()
-    }
-  }
-}
-
-/**
  * Moves the range edges to the first and last visible text nodes inside of it.
  * If there are no visible text nodes in the range then it is collapsed.
  */
@@ -388,6 +244,7 @@ export function moveRangeEdgesToTextNodes(range: Range) {
     range.collapse()
     return
   }
+
   const firstNode = getFirstNodeForBlockSearch(range)
 
   // Making sure the range starts with visible text.
@@ -434,38 +291,6 @@ export function findWordStartBoundInTextNode(
     // Because we did a backwards search, the found index counts backwards
     // from offset, so we subtract to find the start of the word.
     return offset - boundaryIndex
-  }
-  return -1
-}
-
-/**
- * Attempts to find a word end within the given text node, starting at |offset|.
- *
- * @param {Node} node - a node to be searched
- * @param {Number|Undefined} endOffset - the character offset within |node|
- *     where the selected text end. If undefined, the entire node will be
- *     searched.
- * @return {Number} the number indicating the offset to which a range should
- *     be set to ensure it ends on a word bound. Returns -1 if the node is not
- *     a text node, or if no word boundary character could be found.
- */
-function findWordEndBoundInTextNode(node: Node, endOffset: number): number {
-  if (node.nodeType !== Node.TEXT_NODE) return -1
-  const offset = endOffset != null ? endOffset : 0
-
-  // If the last character in the range is a boundary character, we don't
-  // need to do anything.
-  if (
-    offset < node.data.length &&
-    offset > 0 &&
-    BOUNDARY_CHARS.test(node.data[offset - 1])
-  ) {
-    return offset
-  }
-  const followingText = node.data.substring(offset)
-  const boundaryIndex = followingText.search(BOUNDARY_CHARS)
-  if (boundaryIndex !== -1) {
-    return offset + boundaryIndex
   }
   return -1
 }

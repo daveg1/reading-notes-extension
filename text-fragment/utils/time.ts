@@ -18,8 +18,8 @@ export function setTimeout(newTimeoutDurationMs: number): void {
  * Call at the start of fragment generation to set the baseline for timeout
  * checking.
  */
-export function recordStartTime(newStartTime: number): void {
-  t0 = newStartTime
+export function recordStartTime(): void {
+  t0 = Date.now()
 }
 
 export function checkTimeout() {
