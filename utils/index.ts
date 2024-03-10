@@ -2,6 +2,7 @@
  * Useful links
  * https://web.dev/articles/text-fragments
  * https://developer.mozilla.org/en-US/docs/Web/Text_fragments
+ * https://gist.github.com/devjin0617/3e8d72d94c1b9e69690717a219644c7a
  *
  * Syntax:
  * #:~:text=[prefix-,]start[,end][,-suffix]
