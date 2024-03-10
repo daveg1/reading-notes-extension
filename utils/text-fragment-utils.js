@@ -22,8 +22,6 @@
  * @property {string} [suffix]
  */
 
-const FRAGMENT_DIRECTIVES = ['text']
-
 // Block elements. elements of a text fragment cannot cross the boundaries of a
 // block element. Source for the list:
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements#Elements
@@ -85,12 +83,6 @@ const NON_BOUNDARY_CHARS =
   /[^\t-\r -#%-\*,-\/:;\?@\[-\]_\{\}\x85\xA0\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u1680\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2000-\u200A\u2010-\u2029\u202F-\u2043\u2045-\u2051\u2053-\u205F\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E44\u3000-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC9\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD807[\uDC41-\uDC45\uDC70\uDC71]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/u
 
 /**
- * Text fragments CSS class name.
- */
-export const TEXT_FRAGMENT_CSS_CLASS_NAME =
-  'text-fragments-polyfill-target-text'
-
-/**
  * Get all text fragments from a string
  * @param {string} hash - string retrieved from Location#hash.
  * @return {{text: string[]}} Text Fragments contained in the hash.
@@ -105,84 +97,6 @@ export const getFragmentDirectives = (hash) => {
   } else {
     return { text: fragmentDirectivesStrings }
   }
-}
-
-/**
- * Decompose text fragment strings into objects, describing each part of each
- * text fragment.
- * @param {{text: string[]}} fragmentDirectives - Text fragment to decompose
- *     into separate elements.
- * @return {{text: TextFragment[]}} Text Fragments, each containing textStart,
- *     textEnd, prefix and suffix.
- */
-export const parseFragmentDirectives = (fragmentDirectives) => {
-  const parsedFragmentDirectives = {}
-  for (const [
-    fragmentDirectiveType,
-    fragmentDirectivesOfType,
-  ] of Object.entries(fragmentDirectives)) {
-    if (FRAGMENT_DIRECTIVES.includes(fragmentDirectiveType)) {
-      parsedFragmentDirectives[fragmentDirectiveType] =
-        fragmentDirectivesOfType.map((fragmentDirectiveOfType) => {
-          return parseTextFragmentDirective(fragmentDirectiveOfType)
-        })
-    }
-  }
-  return parsedFragmentDirectives
-}
-
-/**
- * Decompose a string into an object containing all the parts of a text
- * fragment.
- * @param {string} textFragment - String to decompose.
- * @return {TextFragment} Object containing textStart, textEnd, prefix and
- *     suffix of the text fragment.
- */
-const parseTextFragmentDirective = (textFragment) => {
-  const TEXT_FRAGMENT = /^(?:(.+?)-,)?(?:(.+?))(?:,([^-]+?))?(?:,-(.+?))?$/
-  return {
-    prefix: decodeURIComponent(textFragment.replace(TEXT_FRAGMENT, '$1')),
-    textStart: decodeURIComponent(textFragment.replace(TEXT_FRAGMENT, '$2')),
-    textEnd: decodeURIComponent(textFragment.replace(TEXT_FRAGMENT, '$3')),
-    suffix: decodeURIComponent(textFragment.replace(TEXT_FRAGMENT, '$4')),
-  }
-}
-
-/**
- * Mark the text fragments with `<mark>` tags.
- * @param {{text: TextFragment[]}} parsedFragmentDirectives - Text fragments to
- *     process.
- * @param {Document} documentToProcess - document where to extract and mark
- *     fragments in.
- * @return {{text: Element[]}} `<mark>` elements created to highlight the
- *     text fragments.
- */
-export const processFragmentDirectives = (
-  parsedFragmentDirectives,
-  documentToProcess = document
-) => {
-  const processedFragmentDirectives = {}
-  for (const [
-    fragmentDirectiveType,
-    fragmentDirectivesOfType,
-  ] of Object.entries(parsedFragmentDirectives)) {
-    if (FRAGMENT_DIRECTIVES.includes(fragmentDirectiveType)) {
-      processedFragmentDirectives[fragmentDirectiveType] =
-        fragmentDirectivesOfType.map((fragmentDirectiveOfType) => {
-          const result = processTextFragmentDirective(
-            fragmentDirectiveOfType,
-            documentToProcess
-          )
-          if (result.length >= 1) {
-            // Per spec, the first matching text on the page should be
-            // highlighted when multiple segments match.
-            return markRange(result[0], documentToProcess)
-          }
-          return []
-        })
-    }
-  }
-  return processedFragmentDirectives
 }
 
 /**
@@ -357,24 +271,6 @@ export const processTextFragmentDirective = (
 }
 
 /**
- * Removes the given highlights.
- * @param {Node[]} marks - a list of <mark> elements to be removed, with their
- *     contents extracted and returned to the parent node (from which they were
- *     originally pulled).
- * @param {Document} documentToProcess - document where to remove the marks.
- */
-export const removeMarks = (marks, documentToProcess = document) => {
-  for (const mark of marks) {
-    const range = documentToProcess.createRange()
-    range.selectNodeContents(mark)
-    const fragment = range.extractContents()
-    const parent = mark.parentNode
-    parent.insertBefore(fragment, mark)
-    parent.removeChild(mark)
-  }
-}
-
-/**
  * Enum indicating the result of the checkSuffix function.
  */
 const CheckSuffixResult = {
@@ -492,96 +388,6 @@ const makeTextNodeWalker = (range) => {
   )
 
   return walker
-}
-
-/**
- * Given a Range, wraps its text contents in one or more <mark> elements.
- * <mark> elements can't cross block boundaries, so this function walks the
- * tree to find all the relevant text nodes and wraps them.
- * @param {Range} range - the range to mark. Must start and end inside of
- *     text nodes.
- * @param {Document} documentToProcess - document where to highlight the range.
- * @return {Element[]} The <mark> nodes that were created.
- */
-export const markRange = (range, documentToProcess = document) => {
-  if (
-    range.startContainer.nodeType != Node.TEXT_NODE ||
-    range.endContainer.nodeType != Node.TEXT_NODE
-  )
-    return []
-
-  // If the range is entirely within a single node, just surround it.
-  if (range.startContainer === range.endContainer) {
-    const trivialMark = documentToProcess.createElement('mark')
-    trivialMark.setAttribute('class', TEXT_FRAGMENT_CSS_CLASS_NAME)
-    range.surroundContents(trivialMark)
-    return [trivialMark]
-  }
-
-  // Start node -- special case
-  const startNode = range.startContainer
-  const startNodeSubrange = range.cloneRange()
-  startNodeSubrange.setEndAfter(startNode)
-
-  // End node -- special case
-  const endNode = range.endContainer
-  const endNodeSubrange = range.cloneRange()
-  endNodeSubrange.setStartBefore(endNode)
-
-  // In between nodes
-  const marks = []
-  range.setStartAfter(startNode)
-  range.setEndBefore(endNode)
-  const walker = documentToProcess.createTreeWalker(
-    range.commonAncestorContainer,
-    NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: function (node) {
-        if (!range.intersectsNode(node)) return NodeFilter.FILTER_REJECT
-
-        if (
-          BLOCK_ELEMENTS.includes(node.tagName) ||
-          node.nodeType === Node.TEXT_NODE
-        )
-          return NodeFilter.FILTER_ACCEPT
-        return NodeFilter.FILTER_SKIP
-      },
-    }
-  )
-  let node = walker.nextNode()
-  while (node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      const mark = documentToProcess.createElement('mark')
-      mark.setAttribute('class', TEXT_FRAGMENT_CSS_CLASS_NAME)
-      node.parentNode.insertBefore(mark, node)
-      mark.appendChild(node)
-      marks.push(mark)
-    }
-    node = walker.nextNode()
-  }
-
-  const startMark = documentToProcess.createElement('mark')
-  startMark.setAttribute('class', TEXT_FRAGMENT_CSS_CLASS_NAME)
-  startNodeSubrange.surroundContents(startMark)
-  const endMark = documentToProcess.createElement('mark')
-  endMark.setAttribute('class', TEXT_FRAGMENT_CSS_CLASS_NAME)
-  endNodeSubrange.surroundContents(endMark)
-
-  return [startMark, ...marks, endMark]
-}
-
-/**
- * Scrolls an element into view, following the recommendation of
- * https://wicg.github.io/scroll-to-text-fragment/#navigating-to-text-fragment
- * @param {Element} element - Element to scroll into view.
- */
-export const scrollElementIntoView = (element) => {
-  const behavior = {
-    behavior: 'auto',
-    block: 'center',
-    inline: 'nearest',
-  }
-  element.scrollIntoView(behavior)
 }
 
 /**
@@ -1106,93 +912,17 @@ const backwardTraverse = (walker, finishedSubtrees) => {
 }
 
 /**
- * Should not be referenced except in the /test directory.
- */
-export const forTesting = {
-  advanceRangeStartPastOffset: advanceRangeStartPastOffset,
-  advanceRangeStartToNonWhitespace: advanceRangeStartToNonWhitespace,
-  findRangeFromNodeList: findRangeFromNodeList,
-  findTextInRange: findTextInRange,
-  getBoundaryPointAtIndex: getBoundaryPointAtIndex,
-  isWordBounded: isWordBounded,
-  makeNewSegmenter: makeNewSegmenter,
-  markRange: markRange,
-  normalizeString: normalizeString,
-  parseTextFragmentDirective: parseTextFragmentDirective,
-  forwardTraverse: forwardTraverse,
-  backwardTraverse: backwardTraverse,
-  getAllTextNodes: getAllTextNodes,
-  acceptTextNodeIfVisibleInRange: acceptTextNodeIfVisibleInRange,
-}
-
-/**
  * Should only be used by other files in this directory.
  */
 export const internal = {
-  BLOCK_ELEMENTS: BLOCK_ELEMENTS,
-  BOUNDARY_CHARS: BOUNDARY_CHARS,
-  NON_BOUNDARY_CHARS: NON_BOUNDARY_CHARS,
-  acceptNodeIfVisibleInRange: acceptNodeIfVisibleInRange,
-  normalizeString: normalizeString,
-  makeNewSegmenter: makeNewSegmenter,
-  forwardTraverse: forwardTraverse,
-  backwardTraverse: backwardTraverse,
-  makeTextNodeWalker: makeTextNodeWalker,
-  isNodeVisible: isNodeVisible,
-}
-
-// Allow importing module from closure-compiler projects that haven't migrated
-// to ES6 modules.
-if (typeof goog !== 'undefined') {
-  // clang-format off
-  goog.declareModuleId(
-    'googleChromeLabs.textFragmentPolyfill.textFragmentUtils'
-  )
-  // clang-format on
-}
-
-/**
- * Replaces all occurence of the pseudo element ::target-text to a css class
- * text-fragments-polyfill-target-text
- *
- */
-export const applyTargetTextStyle = () => {
-  const styles = document.getElementsByTagName('style')
-  if (!styles) return
-
-  for (const style of styles) {
-    const cssRules = style.innerHTML
-    const targetTextRules = cssRules.match(
-      /(\w*)::target-text\s*{\s*((.|\n)*?)\s*}/g
-    )
-    if (!targetTextRules) continue
-
-    const markCss = targetTextRules.join('\n')
-    const newNode = document.createTextNode(
-      markCss.replaceAll('::target-text', ` .${TEXT_FRAGMENT_CSS_CLASS_NAME}`)
-    )
-    style.appendChild(newNode)
-  }
-}
-
-/**
- * Add color and background-color to the CSS class.
- *
- * @param {Object} - background-color and color that will be applied to the
- *     to the CSS class.
- */
-export const setDefaultTextFragmentsStyle = ({ backgroundColor, color }) => {
-  const defaultStyle = `.${TEXT_FRAGMENT_CSS_CLASS_NAME} {
-    background-color: ${backgroundColor};
-    color: ${color};
-  }
-
-  .${TEXT_FRAGMENT_CSS_CLASS_NAME} a, a .${TEXT_FRAGMENT_CSS_CLASS_NAME} {
-    text-decoration: underline;
-  }
-  `
-  document.head.insertAdjacentHTML(
-    'beforeend',
-    `<style type="text/css">${defaultStyle}</style>`
-  )
+  BLOCK_ELEMENTS,
+  BOUNDARY_CHARS,
+  NON_BOUNDARY_CHARS,
+  acceptNodeIfVisibleInRange,
+  normalizeString,
+  makeNewSegmenter,
+  forwardTraverse,
+  backwardTraverse,
+  makeTextNodeWalker,
+  isNodeVisible,
 }
