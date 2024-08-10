@@ -39,7 +39,7 @@ export function SidebarContextProvider({
 }) {
   const [notes, setNotes] = useState<Note[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isEditing, setIsEditing] = useState(!false)
+  const [isEditing, setIsEditing] = useState(false)
   const [editSelection, setEditSelection] = useState<Note[]>([])
   const [isGrouped, setIsGrouped] = useState(false)
   const [isAscending, setIsAscending] = useState(true)
