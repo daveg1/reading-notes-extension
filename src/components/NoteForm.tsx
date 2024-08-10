@@ -1,7 +1,6 @@
-import './NoteForm.css'
 import { useContext } from 'react'
-import { SidebarContext } from '../../contexts/SidebarContext'
-import { noteObjectFromUrl } from '../../utils'
+import { SidebarContext } from '../contexts/SidebarContext'
+import { noteObjectFromUrl } from '../utils'
 
 export function NoteForm() {
   const { addNote } = useContext(SidebarContext)
@@ -26,16 +25,17 @@ export function NoteForm() {
 
   return (
     <>
-      <form className="form" onSubmit={onSubmit}>
+      <form className="flex w-full gap-1" onSubmit={onSubmit}>
         <input
-          id="note-url-input"
           required
-          className="form__input"
+          className="h-7 w-full rounded border border-gray-300 px-1 text-xs"
           name={FORM_URL_FIELD}
           type="text"
           placeholder="Chrome highlight url"
         />
-        <button className="button button--text">Save</button>
+        <button className="rounded border border-gray-300 bg-white px-2 transition-opacity hover:opacity-75">
+          Save
+        </button>
       </form>
     </>
   )

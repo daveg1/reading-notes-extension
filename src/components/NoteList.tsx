@@ -1,6 +1,5 @@
 import { useContext } from 'react'
-import './NoteList.css'
-import { Note } from '../../interfaces/note'
+import { Note } from '../interfaces/note'
 import {
   createUrlPattern,
   getActiveTab,
@@ -10,12 +9,11 @@ import {
   setTabUrl,
   sortNotes,
   urlsEqual,
-} from '../../utils'
-import { SidebarContext } from '../../contexts/SidebarContext'
+} from '../utils'
+import { SidebarContext } from '../contexts/SidebarContext'
 
 export function NoteList() {
-  const { notes, removeNote, isGrouped, isAscending } =
-    useContext(SidebarContext)
+  const { notes, isGrouped, isAscending } = useContext(SidebarContext)
 
   async function openNote(note: Note) {
     // if we have a tab opened at the target page, set it as active
@@ -49,7 +47,7 @@ export function NoteList() {
 
   return (
     <>
-      <div className="note-list">
+      <div className="flex flex-col gap-2">
         {/* <!-- Onclick: scroll to note on page, highlight text (maybe flash text?) --> */}
         {/* <!-- Should contain max of 64 ch --> */}
 
@@ -57,16 +55,18 @@ export function NoteList() {
 
         {isGrouped &&
           [...groupNotes(sortedNotes)].map(([group, notes], index) => (
-            <section key={index} className="note-list">
-              <h3>{group}</h3>
-              <div className="note-list">
+            <section
+              key={index}
+              className="flex flex-col gap-2 [&:not(:first-child)]:pt-2"
+            >
+              <h3 className="text-sm font-medium">{group}</h3>
+              <div className="flex flex-col gap-2">
                 {notes.map((note) => (
                   <NoteItem
                     key={note.id}
                     note={note}
                     hasGroup={true}
                     onOpen={openNote}
-                    onDelete={removeNote}
                   />
                 ))}
               </div>
@@ -74,14 +74,13 @@ export function NoteList() {
           ))}
 
         {!isGrouped && (
-          <div className="note-list">
+          <div className="flex flex-col gap-2">
             {sortedNotes.map((note) => (
               <NoteItem
                 key={note.id}
                 note={note}
                 hasGroup={false}
                 onOpen={openNote}
-                onDelete={removeNote}
               />
             ))}
           </div>
@@ -95,33 +94,31 @@ function NoteItem(props: {
   note: Note
   hasGroup: boolean
   onOpen: (note: Note) => void
-  onDelete: (note: Note) => void
 }) {
-  const { note, hasGroup, onOpen, onDelete } = props
+  const { note, onOpen } = props
 
   return (
-    <div className="note">
-      <a
-        className="note__link"
-        href={note.sourceUrl}
-        target="_blank"
-        onClick={(e) => {
-          e.preventDefault()
-          onOpen(note)
-        }}
-      >
-        {!hasGroup && (
-          <span className="note__link__source" title={note.sourceTitle}>
-            {note.sourceTitle}
-          </span>
-        )}
+    <a
+      className="flex select-none items-center rounded bg-white p-2 shadow-sm hover:bg-gray-300"
+      href={note.sourceUrl}
+      target="_blank"
+      onClick={(e) => {
+        e.preventDefault()
+        onOpen(note)
+      }}
+    >
+      <div className="flex w-full flex-col gap-1">
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+          {note.text}
+        </span>
 
-        <span className="note__link__text">{note.text}</span>
-      </a>
-
-      <button className="button note__delete" onClick={() => onDelete(note)}>
-        ⨯
-      </button>
-    </div>
+        <span
+          className="overflow-hidden text-ellipsis whitespace-nowrap text-xs opacity-75"
+          title={note.sourceUrl}
+        >
+          {note.sourceUrl}
+        </span>
+      </div>
+    </a>
   )
 }

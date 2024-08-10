@@ -1,3 +1,3 @@
-export * from './Header/Header'
-export * from './NoteForm/NoteForm'
-export * from './NoteList/NoteList'
+export * from './ActionsMenu'
+export * from './NoteForm'
+export * from './NoteList'

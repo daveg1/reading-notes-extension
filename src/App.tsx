@@ -1,13 +1,16 @@
-import './App.css'
-import { Header, NoteForm, NoteList } from './components'
+import { ActionsMenu, NoteForm, NoteList } from './components'
 
 function App() {
   return (
     <>
-      <Header />
+      <main className="flex flex-col gap-4 px-3 py-3">
+        <div className="flex gap-3">
+          <NoteForm />
+          <ActionsMenu />
+        </div>
 
-      <main className="content">
-        <NoteForm />
+        <hr />
+
         <NoteList />
       </main>
     </>
