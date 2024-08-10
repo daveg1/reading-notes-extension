@@ -9,7 +9,7 @@ export function ActionsMenu() {
       <button
         className="rounded bg-gray-300 p-1 transition-colors hover:bg-gray-300/60"
         onClick={() => updateOptions({ isGrouped: !isGrouped, isAscending })}
-        title={isGrouped ? 'group view' : 'list view'}
+        title={isGrouped ? 'Group view' : 'List view'}
       >
         {isGrouped && (
           <svg viewBox="0 0 16 16" fill="currentColor" className="size-4">

@@ -49,6 +49,7 @@ export function SidebarContextProvider({
       setNotes(notes)
       setIsGrouped(options.isGrouped)
       setIsAscending(options.isAscending)
+
       setIsLoading(false)
     }
 
