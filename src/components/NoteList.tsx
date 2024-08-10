@@ -55,7 +55,7 @@ export function NoteList() {
         {/* <!-- Onclick: scroll to note on page, highlight text (maybe flash text?) --> */}
         {/* <!-- Should contain max of 64 ch --> */}
 
-        {!notes.length && <span>No notes yet. Go add one!</span>}
+        {!notes.length && <span>No notes yet. Go add some!</span>}
 
         {isGrouped &&
           [...groupNotes(sortedNotes)].map(([group, notes], index) => (
