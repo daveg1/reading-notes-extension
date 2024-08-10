@@ -6,7 +6,7 @@ A chrome sidebar extension to keep track of notes across websites. Provides a li
 
 - ✅ Syncs across devices
 - ✅ Group and sort notes
-- 🔜 Edit notes
+- ✅ Edit notes
 - 🔜 Rename groups
 - 🔜 Add notes via context menu
 
