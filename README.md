@@ -34,12 +34,17 @@ A chrome sidebar extension to keep track of notes across websites. Provides a li
 
 3. In sidebar, paste url and save note
 
-   ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/a7162373-b553-43c2-bd08-cccbf5d4afcb)
+   ![image](https://github.com/user-attachments/assets/57835633-195e-47fb-8a4f-90bc14cb5546)
 
 4. A note is added which you can view by clicking
 
-   ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/d69d9fb1-7de6-448e-8107-8a6f20b253e9)
+   ![image](https://github.com/user-attachments/assets/3e5ba13b-7743-4924-856c-ef8135415f2e)
 
-5. Clicking multiple notes on the same page creates multiple highlights!
+5. Edit your notes!
 
-   ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/5e18fc9f-5a1b-4c00-86db-ae4022e13bff)
+   ![image](https://github.com/user-attachments/assets/f6e1d105-82ed-4ca5-973e-87038bf17195)
+
+6. Organise them!
+
+   ![image](https://github.com/user-attachments/assets/4bb6fe8c-9905-41ae-baa0-78ff6fc6f279)
+
