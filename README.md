@@ -20,6 +20,7 @@ A chrome sidebar extension to keep track of notes across websites. Provides a li
 
 4. Drag /build folder onto page
    - run `npm run build` to create your own build
+   - alternatively, run `npm run dev` and drag /dist if developing
 5. Should be installed
 
    ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/348de502-f74a-4e5d-aee2-dad16271b039)
