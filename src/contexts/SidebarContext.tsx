@@ -22,6 +22,7 @@ interface NoteContext {
   saveAndExitEditing: () => void
   cancelEditing: () => void
   editSelection: Note[]
+  setEditSelection: React.Dispatch<React.SetStateAction<Note[]>>
   toggleFromEditSelection(note: Note): void
 
   // sorting & grouping options
@@ -143,6 +144,7 @@ export function SidebarContextProvider({
     saveAndExitEditing,
     cancelEditing,
     updateOptions,
+    setEditSelection,
     toggleFromEditSelection,
   }
 

@@ -11,10 +11,17 @@ import {
   urlsEqual,
 } from '../utils'
 import { SidebarContext } from '../contexts/SidebarContext'
+import { Checkbox } from './ui/Checkbox'
 
 export function NoteList() {
-  const { notes, isGrouped, isAscending, editSelection } =
-    useContext(SidebarContext)
+  const {
+    notes,
+    isGrouped,
+    isAscending,
+    editSelection,
+    isEditing,
+    setEditSelection,
+  } = useContext(SidebarContext)
 
   async function openNote(note: Note) {
     // if we have a tab opened at the target page, set it as active
@@ -44,6 +51,14 @@ export function NoteList() {
     }
   }
 
+  function toggleSelectAll() {
+    if (editSelection.length < notes.length) {
+      setEditSelection([...notes])
+    } else {
+      setEditSelection([])
+    }
+  }
+
   const isInSelection = (note: Note) =>
     !!editSelection.find((n) => n.id === note.id)
 
@@ -56,6 +71,21 @@ export function NoteList() {
         {/* <!-- Should contain max of 64 ch --> */}
 
         {!notes.length && <span>No notes yet. Go add some!</span>}
+
+        {isEditing && (
+          <div
+            className="flex cursor-pointer select-none gap-2 self-start ps-2"
+            onClick={() => toggleSelectAll()}
+          >
+            <Checkbox
+              isChecked={editSelection.length === notes.length}
+              isPartial={
+                !!editSelection.length && editSelection.length < notes.length
+              }
+            />
+            Select all
+          </div>
+        )}
 
         {isGrouped &&
           [...groupNotes(sortedNotes)].map(([group, notes], index) => (
@@ -117,11 +147,7 @@ function NoteItem(props: {
         }
       }}
     >
-      {isEditing && (
-        <div className="grid size-4 shrink-0 place-content-center rounded border border-current text-gray-500">
-          {isSelected && <div className="size-2 rounded-sm bg-current"></div>}
-        </div>
-      )}
+      {isEditing && <Checkbox isChecked={isSelected} />}
 
       <div className="flex min-w-0 flex-grow flex-col gap-1">
         <span className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap text-sm">
