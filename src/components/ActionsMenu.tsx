@@ -3,8 +3,14 @@ import { SidebarContext } from '../contexts/SidebarContext'
 import clsx from 'clsx'
 
 export function ActionsMenu() {
-  const { isGrouped, isAscending, startEditing, updateOptions } =
-    useContext(SidebarContext)
+  const {
+    isGrouped,
+    isAscending,
+    notes,
+    isEditing,
+    startEditing,
+    updateOptions,
+  } = useContext(SidebarContext)
   const [isFiltering, setIsFiltering] = useState(false)
   const filterRef = useRef<HTMLButtonElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -39,8 +45,9 @@ export function ActionsMenu() {
   return (
     <menu className="relative flex items-center justify-end gap-2 bg-gray-100">
       <button
-        className="grid size-6 place-content-center rounded text-gray-500 transition-colors hover:bg-gray-300/70 hover:text-gray-800"
+        className="grid size-6 place-content-center rounded text-gray-500 transition-all hover:bg-gray-300/70 hover:text-gray-800 disabled:pointer-events-none disabled:opacity-50"
         onClick={() => startEditing()}
+        disabled={isEditing && !notes.length}
       >
         <svg viewBox="0 0 16 16" fill="currentColor" className="size-4">
           <path d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L6.75 6.774a2.75 2.75 0 0 0-.596.892l-.848 2.047a.75.75 0 0 0 .98.98l2.047-.848a2.75 2.75 0 0 0 .892-.596l4.261-4.262a1.75 1.75 0 0 0 0-2.474Z" />
@@ -49,9 +56,10 @@ export function ActionsMenu() {
       </button>
 
       <button
-        className="grid size-6 place-content-center rounded text-gray-500 transition-colors hover:bg-gray-300/70 hover:text-gray-800"
+        className="grid size-6 place-content-center rounded text-gray-500 transition-all hover:bg-gray-300/70 hover:text-gray-800 disabled:pointer-events-none disabled:opacity-50"
         ref={filterRef}
         onClick={() => setIsFiltering(true)}
+        disabled={isEditing && !notes.length}
       >
         <svg viewBox="0 0 16 16" fill="currentColor" className="size-4">
           <path d="M14 2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2.172a2 2 0 0 0 .586 1.414l2.828 2.828A2 2 0 0 1 6 9.828v4.363a.5.5 0 0 0 .724.447l2.17-1.085A2 2 0 0 0 10 11.763V9.829a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 0 14 4.172V2Z" />

@@ -104,7 +104,7 @@ function NoteItem(props: {
 
   return (
     <a
-      className="flex cursor-pointer select-none items-center gap-2 rounded bg-white p-2 shadow-sm hover:bg-gray-300"
+      className="flex cursor-pointer select-none items-center gap-2 rounded bg-white p-2 shadow-sm transition-colors hover:bg-gray-300"
       href={!isEditing ? note.sourceUrl : undefined}
       target="_blank"
       onClick={(e) => {
