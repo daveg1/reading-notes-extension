@@ -1,0 +1,23 @@
+.header {
+  align-items: center;
+  background-color: #f2f4f8;
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing);
+
+  .header__text {
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 1.25rem;
+    position: relative;
+  }
+
+  .header__actions {
+    display: flex;
+    gap: var(--spacing-half);
+
+    .button {
+      height: 1.5rem;
+    }
+  }
+}

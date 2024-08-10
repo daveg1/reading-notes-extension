@@ -1,7 +1,15 @@
+import './App.css'
+import { Header, NoteForm, NoteList } from './components'
+
 function App() {
   return (
     <>
-      <h1>Works!</h1>
+      <Header />
+
+      <main className="content">
+        <NoteForm />
+        <NoteList />
+      </main>
     </>
   )
 }

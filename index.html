@@ -5,61 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sidebar</title>
-    <script type="module" src="/src/main.ts"></script>
     <script type="module" src="/src/main.tsx"></script>
   </head>
   <body>
     <div id="root"></div>
-
-    <header class="header">
-      <h2 class="header__text">Your notes</h2>
-
-      <div class="header__actions">
-        <button id="button-grouped" class="button button--text">
-          [ ] grouped
-        </button>
-        <button id="button-sort" class="button button--icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-          >
-            <path
-              class="sort-up"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
-            />
-            <path
-              class="sort-down"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
-            />
-          </svg>
-        </button>
-      </div>
-    </header>
-
-    <main class="content">
-      <form id="note-form" class="form">
-        <input
-          id="note-url-input"
-          required
-          class="form__input"
-          name="h-url"
-          type="text"
-          placeholder="Chrome highlight url"
-        />
-        <button class="button button--text">Save</button>
-      </form>
-
-      <div class="note-list">
-        <!-- Onclick: scroll to note on page, highlight text (maybe flash text?) -->
-        <!-- Should contain max of 64 ch -->
-      </div>
-    </main>
   </body>
 </html>

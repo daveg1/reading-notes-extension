@@ -1,0 +1,65 @@
+.note-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+
+  &:not(:first-of-type) h3 {
+    margin-block: var(--spacing-half) calc(var(--spacing-half) * 0.5);
+  }
+
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+}
+
+.note {
+  position: relative;
+
+  &:hover {
+    background-color: #e7e7e7;
+  }
+
+  .note__link {
+    border-radius: 2px;
+    box-shadow: 0 1px 3px #ccc;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-half);
+    line-height: 1.3;
+    text-decoration: none;
+    padding: var(--spacing-half);
+    user-select: none;
+
+    .note__source {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .note__text {
+      display: -webkit-box;
+      overflow: hidden;
+      width: 100%;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+    }
+  }
+
+  .note__delete {
+    height: 100%;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    padding-inline: var(--spacing);
+    position: absolute;
+    opacity: 0;
+
+    &:hover,
+    &:focus {
+      opacity: 1;
+    }
+  }
+}
