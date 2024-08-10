@@ -1,9 +1,10 @@
 import { useContext } from 'react'
 import { ActionsMenu, NoteForm, NoteList } from './components'
 import { SidebarContext } from './contexts/SidebarContext'
+import { EditingMenu } from './components/EditingMenu'
 
 function App() {
-  const { isLoading } = useContext(SidebarContext)
+  const { isLoading, isEditing } = useContext(SidebarContext)
 
   return (
     <>
@@ -32,8 +33,14 @@ function App() {
         {!isLoading && (
           <>
             <div className="flex gap-3">
-              <NoteForm />
-              <ActionsMenu />
+              {!isEditing ? (
+                <>
+                  <NoteForm />
+                  <ActionsMenu />
+                </>
+              ) : (
+                <EditingMenu />
+              )}
             </div>
 
             <hr />

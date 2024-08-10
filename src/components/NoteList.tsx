@@ -13,7 +13,8 @@ import {
 import { SidebarContext } from '../contexts/SidebarContext'
 
 export function NoteList() {
-  const { notes, isGrouped, isAscending } = useContext(SidebarContext)
+  const { notes, isGrouped, isAscending, editSelection } =
+    useContext(SidebarContext)
 
   async function openNote(note: Note) {
     // if we have a tab opened at the target page, set it as active
@@ -43,6 +44,9 @@ export function NoteList() {
     }
   }
 
+  const isInSelection = (note: Note) =>
+    !!editSelection.find((n) => n.id === note.id)
+
   const sortedNotes = sortNotes(notes, isAscending)
 
   return (
@@ -65,7 +69,7 @@ export function NoteList() {
                   <NoteItem
                     key={note.id}
                     note={note}
-                    hasGroup={true}
+                    isSelected={isInSelection(note)}
                     onOpen={openNote}
                   />
                 ))}
@@ -79,7 +83,7 @@ export function NoteList() {
               <NoteItem
                 key={note.id}
                 note={note}
-                hasGroup={false}
+                isSelected={isInSelection(note)}
                 onOpen={openNote}
               />
             ))}
@@ -92,28 +96,40 @@ export function NoteList() {
 
 function NoteItem(props: {
   note: Note
-  hasGroup: boolean
+  isSelected: boolean
   onOpen: (note: Note) => void
 }) {
-  const { note, onOpen } = props
+  const { note, isSelected, onOpen } = props
+  const { isEditing, toggleFromEditSelection } = useContext(SidebarContext)
 
   return (
     <a
-      className="flex select-none items-center rounded bg-white p-2 shadow-sm hover:bg-gray-300"
-      href={note.sourceUrl}
+      className="flex cursor-pointer select-none items-center gap-2 rounded bg-white p-2 shadow-sm hover:bg-gray-300"
+      href={!isEditing ? note.sourceUrl : undefined}
       target="_blank"
       onClick={(e) => {
         e.preventDefault()
-        onOpen(note)
+
+        if (isEditing) {
+          toggleFromEditSelection(note)
+        } else {
+          onOpen(note)
+        }
       }}
     >
-      <div className="flex w-full flex-col gap-1">
-        <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+      {isEditing && (
+        <div className="grid size-4 shrink-0 place-content-center rounded border border-current text-gray-500">
+          {isSelected && <div className="size-2 rounded-sm bg-current"></div>}
+        </div>
+      )}
+
+      <div className="flex min-w-0 flex-grow flex-col gap-1">
+        <span className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap text-sm">
           {note.text}
         </span>
 
         <span
-          className="overflow-hidden text-ellipsis whitespace-nowrap text-xs opacity-75"
+          className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap text-xs opacity-75"
           title={note.sourceUrl}
         >
           {note.sourceUrl}

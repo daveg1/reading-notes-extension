@@ -2,6 +2,8 @@ import { useContext } from 'react'
 import { SidebarContext } from '../contexts/SidebarContext'
 import { noteObjectFromUrl } from '../utils'
 
+// TODO: move to action bar
+
 export function NoteForm() {
   const { addNote } = useContext(SidebarContext)
   const FORM_URL_FIELD = 'h-url'
@@ -33,6 +35,7 @@ export function NoteForm() {
           type="text"
           placeholder="Chrome highlight url"
         />
+
         <button className="rounded border border-gray-300 bg-white px-2 transition-opacity hover:opacity-75">
           Save
         </button>
