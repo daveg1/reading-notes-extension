@@ -5,6 +5,7 @@
   "version": "1.0",
   "host_permissions": ["http://*/*", "https://*/*"],
 	"permissions": [
+    "contextMenus",
     "scripting",
     "sidePanel",
     "storage",
@@ -15,5 +16,13 @@
 	},
   "side_panel": {
     "default_path": "index.html"
-  }
+  },
+  "content_scripts": [
+    {
+      "world": "MAIN",
+      "js": ["content.js"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_start"
+    }
+  ]
 }
