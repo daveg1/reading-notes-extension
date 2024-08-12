@@ -18,9 +18,9 @@ A chrome sidebar extension to keep track of notes across websites. Provides a li
    ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/1768fb34-eb52-41b5-b119-83a33d1684e0)
 
 4. Drag /build folder onto page
-   - run `npm run build` to create your own build
-   - alternatively, run `npm run dev` and drag /dist if developing
-5. Should be installed
+   - `npm run build` to create a build
+   - `npm run dev` to run dev environment
+5. Profit:
 
    ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/348de502-f74a-4e5d-aee2-dad16271b039)
 
