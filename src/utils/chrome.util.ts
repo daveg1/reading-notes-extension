@@ -29,9 +29,11 @@ export async function setTabUrl(tabId: number, url: string) {
 }
 
 /**
- * Sends a message on the chrome runtime
+ * Sends a message within the extension.
+ *
+ * Used to communicate between the service-worker and sidebar scripts.
  * @param message
  */
 export async function sendMessage(message: Message) {
-  chrome.runtime.sendMessage(message)
+  return chrome.runtime.sendMessage(message)
 }

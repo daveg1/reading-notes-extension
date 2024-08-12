@@ -1,6 +1,11 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { Note } from '../interfaces/note'
-import { getStoreValue, noteObjectFromUrl, setStoreValue } from '../utils'
+import {
+  getStoreValue,
+  noteObjectFromUrl,
+  sendMessage,
+  setStoreValue,
+} from '../utils'
 import { Options } from '../interfaces/options'
 import {
   NOTE_STORAGE_KEY,
@@ -48,8 +53,6 @@ export function SidebarContextProvider({
 
   useEffect(function loadSyncedState() {
     async function loadStore() {
-      console.log('loading store....')
-
       const notes: Note[] =
         (await getStoreValue<Note[]>(NOTE_STORAGE_KEY)) ?? []
 
@@ -92,6 +95,11 @@ export function SidebarContextProvider({
     },
     [notes]
   )
+
+  // Send a message when the sidebar is opened
+  useEffect(function emitStartUp() {
+    sendMessage({ type: 'start-up' })
+  }, [])
 
   // Notes
   const addNote = (note: Note) => {
