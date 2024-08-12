@@ -1,18 +1,21 @@
+import { getStoreValue, noteObjectFromUrl, setStoreValue } from './src/utils'
+import { NOTE_STORAGE_KEY } from './src/constants/storage-keys'
+import { Note } from './src/interfaces/note'
+
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch(console.error)
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (!tab?.id || !info.selectionText) return
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (!tab || !tab?.id) return
   if (info.menuItemId !== 'copy-note') return
 
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: () => {
-      // TODO: post message to content script to retrieve fragment
-    },
-    // world: 'MAIN',
-  })
+  const response = await chrome.tabs.sendMessage(tab.id!, 'my message')
+  const newNote = await noteObjectFromUrl(`${response.reply}`)
+
+  // TODO: signal to sidebar to update UI
+  const currentNotes = (await getStoreValue<Note[]>(NOTE_STORAGE_KEY)) ?? []
+  setStoreValue(NOTE_STORAGE_KEY, [...currentNotes, newNote])
 })
 
 chrome.runtime.onInstalled.addListener(() => {
