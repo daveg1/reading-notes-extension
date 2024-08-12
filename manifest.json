@@ -4,23 +4,16 @@
   "description": "Take notes while you read online",
   "version": "1.0",
   "host_permissions": ["http://*/*", "https://*/*"],
-	"permissions": [
-    "contextMenus",
-    "scripting",
-    "sidePanel",
-    "storage",
-    "tabs"
-  ],
-	"background": {
+  "permissions": ["contextMenus", "scripting", "sidePanel", "storage", "tabs"],
+  "background": {
     "service_worker": "service-worker.ts"
-	},
+  },
   "side_panel": {
     "default_path": "index.html"
   },
   "content_scripts": [
     {
-      "world": "MAIN",
-      "js": ["content.js"],
+      "js": ["text-fragment.min.js"],
       "matches": ["<all_urls>"],
       "run_at": "document_start"
     }
