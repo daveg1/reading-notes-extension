@@ -26,24 +26,11 @@ A chrome sidebar extension to keep track of notes across websites. Provides a li
 
 ## Usage
 
-1. Highlight a piece of text on a page
-2. Right click > Copy link to highlight
+Right to save a highlighted piece of text as a new note
 
-   ![image](https://github.com/daveg1/reading-notes-extension/assets/56299930/b9100cfa-7dfc-43a4-95c0-d13ca09e5696)
+   ![image](https://github.com/user-attachments/assets/66ac0a4d-6ec7-4002-8352-71c7265247fb)
 
-3. In sidebar, paste url and save note
+Your note should be added:
 
-   ![image](https://github.com/user-attachments/assets/57835633-195e-47fb-8a4f-90bc14cb5546)
-
-4. A note is added which you can view by clicking
-
-   ![image](https://github.com/user-attachments/assets/3e5ba13b-7743-4924-856c-ef8135415f2e)
-
-5. Edit your notes!
-
-   ![image](https://github.com/user-attachments/assets/f6e1d105-82ed-4ca5-973e-87038bf17195)
-
-6. Organise them!
-
-   ![image](https://github.com/user-attachments/assets/4bb6fe8c-9905-41ae-baa0-78ff6fc6f279)
+   ![image](https://github.com/user-attachments/assets/45938f6d-0ece-4efc-8ff2-6c447d821700)
 
