@@ -2,6 +2,26 @@ import { Note } from '../interfaces/note'
 import { getActiveTab } from './chrome.util'
 import { getPageTitleForUrl } from './url.util'
 
+function formatFragmentText(fragment: string) {
+  // strip prefix
+  if (fragment.includes('-,')) {
+    fragment = fragment.split('-,')[1]
+  }
+
+  // strip suffix
+  if (fragment.includes(',-')) {
+    fragment = fragment.split(',-')[0]
+  }
+
+  // if start and end syntax, insert ellipsis
+  if (fragment.includes(',')) {
+    const [start, end] = fragment.split(',')
+    fragment = `${start} ... ${end}`
+  }
+
+  return decodeURIComponent(fragment)
+}
+
 export async function noteObjectFromUrl(
   sourceUrl: string
 ): Promise<Note | null> {
@@ -20,7 +40,7 @@ export async function noteObjectFromUrl(
     id: crypto.randomUUID(),
     sourceTitle,
     sourceUrl,
-    text: decodeURIComponent(text),
+    text: formatFragmentText(text),
   }
 }
 
