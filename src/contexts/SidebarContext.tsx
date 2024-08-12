@@ -107,15 +107,13 @@ export function SidebarContextProvider({
     setNotes(newNotes)
     setStoreValue(NOTE_STORAGE_KEY, newNotes)
   }
-  const removeNotesBulk = (notes: Note[]) => {
+  const removeNotesBulk = (notesToDelete: Note[]) => {
     const newNotes = notes.slice()
 
-    for (const note of notes) {
+    for (const note of notesToDelete) {
       const index = newNotes.findIndex((n) => n.id === note.id)
       newNotes.splice(index, 1)
     }
-
-    console.log(notes, newNotes)
 
     setNotes(newNotes)
     setStoreValue(NOTE_STORAGE_KEY, newNotes)
