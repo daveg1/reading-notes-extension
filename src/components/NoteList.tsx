@@ -23,34 +23,6 @@ export function NoteList() {
     setEditSelection,
   } = useContext(SidebarContext)
 
-  async function openNote(note: Note) {
-    // if we have a tab opened at the target page, set it as active
-    const urlPattern = createUrlPattern(note.sourceUrl)
-    const tabWithUrl = await getTabWithUrl(urlPattern)
-
-    if (tabWithUrl) {
-      await setActiveTab(tabWithUrl.id!)
-    }
-
-    // if we are on the correct tab, navigate to the target note
-    const activeTab = await getActiveTab()
-    if (urlsEqual(note.sourceUrl, activeTab.url ?? '')) {
-      const currentUrl = new URL(note.sourceUrl)
-      await setTabUrl(activeTab.id!, currentUrl.href)
-
-      // Jump to new hash (i.e. another note on same page)
-      chrome.scripting.executeScript({
-        target: { tabId: activeTab.id! },
-        func: function (hash: string) {
-          window.location.hash = hash
-        },
-        args: [currentUrl.hash],
-      })
-    } else {
-      window.open(note.sourceUrl)
-    }
-  }
-
   function toggleSelectAll() {
     if (editSelection.length < notes.length) {
       setEditSelection([...notes])
@@ -100,7 +72,6 @@ export function NoteList() {
                     key={note.id}
                     note={note}
                     isSelected={isInSelection(note)}
-                    onOpen={openNote}
                   />
                 ))}
               </div>
@@ -114,7 +85,6 @@ export function NoteList() {
                 key={note.id}
                 note={note}
                 isSelected={isInSelection(note)}
-                onOpen={openNote}
               />
             ))}
           </div>
@@ -124,13 +94,37 @@ export function NoteList() {
   )
 }
 
-function NoteItem(props: {
-  note: Note
-  isSelected: boolean
-  onOpen: (note: Note) => void
-}) {
-  const { note, isSelected, onOpen } = props
+function NoteItem(props: { note: Note; isSelected: boolean }) {
+  const { note, isSelected } = props
   const { isEditing, toggleFromEditSelection } = useContext(SidebarContext)
+
+  async function openNote(note: Note) {
+    // if we have a tab opened at the target page, set it as active
+    const urlPattern = createUrlPattern(note.sourceUrl)
+    const tabWithUrl = await getTabWithUrl(urlPattern)
+
+    if (tabWithUrl) {
+      await setActiveTab(tabWithUrl.id!)
+    }
+
+    // if we are on the correct tab, navigate to the target note
+    const activeTab = await getActiveTab()
+    if (urlsEqual(note.sourceUrl, activeTab.url ?? '')) {
+      const currentUrl = new URL(note.sourceUrl)
+      await setTabUrl(activeTab.id!, currentUrl.href)
+
+      // Jump to new hash (i.e. another note on same page)
+      chrome.scripting.executeScript({
+        target: { tabId: activeTab.id! },
+        func: (hash: string) => {
+          window.location.hash = hash
+        },
+        args: [currentUrl.hash],
+      })
+    } else {
+      window.open(note.sourceUrl, '_blank', 'noopener')
+    }
+  }
 
   return (
     <a
@@ -143,7 +137,7 @@ function NoteItem(props: {
         if (isEditing) {
           toggleFromEditSelection(note)
         } else {
-          onOpen(note)
+          openNote(note)
         }
       }}
     >
