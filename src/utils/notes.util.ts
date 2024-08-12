@@ -12,6 +12,10 @@ export async function noteObjectFromUrl(
   const sourceTitle =
     (await getPageTitleForUrl(sourceUrl)) ?? (await getActiveTab()).title ?? ''
 
+  // TODO: parse the text fragment and print a more readable title
+  // e.g. when a prefix and suffix is present, strip them to leave the base text
+  // e.g. also when there is a start and end text, concat them with '...' in between
+
   return {
     id: crypto.randomUUID(),
     sourceTitle,

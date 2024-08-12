@@ -1,3 +1,5 @@
+import { Message } from '../interfaces/message'
+
 export async function getStoreValue<T>(key: string): Promise<T | null> {
   const item = await chrome.storage.sync.get(key)
   return <T>JSON.parse(item[key] ?? null)
@@ -24,4 +26,12 @@ export async function setActiveTab(tabId: number) {
 // TODO: if this works, update above
 export async function setTabUrl(tabId: number, url: string) {
   chrome.tabs.update(tabId, { url })
+}
+
+/**
+ * Sends a message on the chrome runtime
+ * @param message
+ */
+export async function sendMessage(message: Message) {
+  chrome.runtime.sendMessage(message)
 }

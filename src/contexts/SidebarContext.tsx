@@ -1,11 +1,12 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
 import { Note } from '../interfaces/note'
-import { getStoreValue, setStoreValue } from '../utils'
+import { getStoreValue, noteObjectFromUrl, setStoreValue } from '../utils'
 import { Options } from '../interfaces/options'
 import {
   NOTE_STORAGE_KEY,
   OPTIONS_STORAGE_KEY,
 } from '../constants/storage-keys'
+import { Message } from '../interfaces/message'
 
 interface NoteContext {
   // loading state
@@ -47,6 +48,8 @@ export function SidebarContextProvider({
 
   useEffect(function loadSyncedState() {
     async function loadStore() {
+      console.log('loading store....')
+
       const notes: Note[] =
         (await getStoreValue<Note[]>(NOTE_STORAGE_KEY)) ?? []
 
@@ -66,6 +69,29 @@ export function SidebarContextProvider({
 
     loadStore()
   }, [])
+
+  useEffect(
+    function listenToMessages() {
+      const messageListener = async (message: Message) => {
+        if (message.type === 'loading') {
+          setIsLoading(true)
+        }
+
+        if (message.type === 'data') {
+          const newNote = await noteObjectFromUrl(message.data)
+          if (newNote) addNote(newNote)
+          setIsLoading(false)
+        }
+      }
+
+      chrome.runtime.onMessage.addListener(messageListener)
+
+      return () => {
+        chrome.runtime.onMessage.removeListener(messageListener)
+      }
+    },
+    [notes]
+  )
 
   // Notes
   const addNote = (note: Note) => {

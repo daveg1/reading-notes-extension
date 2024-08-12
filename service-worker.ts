@@ -1,6 +1,4 @@
-import { getStoreValue, noteObjectFromUrl, setStoreValue } from './src/utils'
-import { NOTE_STORAGE_KEY } from './src/constants/storage-keys'
-import { Note } from './src/interfaces/note'
+import { sendMessage } from './src/utils/chrome.util'
 
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
@@ -10,12 +8,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (!tab || !tab?.id) return
   if (info.menuItemId !== 'copy-note') return
 
+  sendMessage({ type: 'loading' })
   const response = await chrome.tabs.sendMessage(tab.id!, 'my message')
-  const newNote = await noteObjectFromUrl(`${response.reply}`)
-
-  // TODO: signal to sidebar to update UI
-  const currentNotes = (await getStoreValue<Note[]>(NOTE_STORAGE_KEY)) ?? []
-  setStoreValue(NOTE_STORAGE_KEY, [...currentNotes, newNote])
+  sendMessage({ type: 'data', data: response.reply })
 })
 
 chrome.runtime.onInstalled.addListener(() => {
