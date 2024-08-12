@@ -116,13 +116,13 @@ function NoteItem(props: { note: Note; isSelected: boolean }) {
       // Jump to new hash (i.e. another note on same page)
       chrome.scripting.executeScript({
         target: { tabId: activeTab.id! },
-        func: function (hash: string) {
+        func: (hash: string) => {
           window.location.hash = hash
         },
         args: [currentUrl.hash],
       })
     } else {
-      window.open(note.sourceUrl)
+      window.open(note.sourceUrl, '_blank', 'noopener')
     }
   }
 
